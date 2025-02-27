@@ -24,6 +24,7 @@ void migrate_badge_config(nvs_handle_t nvs_handle, uint32_t stored_version) {
     badge_config_v3_t config_v3 = BADGE_DEFAULTS_V3;
     badge_config_v4_t config_v4 = BADGE_DEFAULTS_V4;
     badge_config_v5_t config_v5 = BADGE_DEFAULTS_V5;
+    badge_config_v6_t config_v6 = BADGE_DEFAULTS_V6;
 
     // ----------------------------------------------------------------------- //
     //                        MIGRATION IMPLEMENTATION                         //
@@ -128,7 +129,36 @@ void migrate_badge_config(nvs_handle_t nvs_handle, uint32_t stored_version) {
         }
     }
 
+     // Version 5 to 5
+    if (stored_version == 5 || migrated_last) {
+        ESP_LOGD(TAG, "Migrating badge config from version 5 to 6");
+        size_t required_size = sizeof(badge_config_v5_t);
+        esp_err_t err        = ESP_OK;
+        if (!migrated_last) {
+            err = nvs_get_blob(nvs_handle, "badge_config", &config_v5, &required_size);
+        }
+        if (err == ESP_OK) {
+            config_v6.hw_pass          = config_v5.hw_pass;
+            config_v6.registered       = config_v5.registered;
+            config_v6.wrist            = config_v5.wrist;
+            config_v6.brightness       = config_v5.brightness;
+            config_v6.screen_timeout   = config_v5.screen_timeout;
+            config_v6.id               = config_v5.id;
+            config_v6.xp               = config_v5.xp;
+            config_v6.level            = config_v5.level;
+            config_v6.enabled          = config_v5.enabled;
+            config_v6.badge_team       = config_v5.badge_team;
+            config_v6.staff            = config_v5.staff;
+            config_v6.blackbadge       = config_v5.blackbadge;
+            config_v6.can_level        = config_v5.can_level;
+            config_v6.community_levels = config_v5.community_levels;
+            config_v6.coins            = config_v5.coins;
+            strncpy(config_v6.handle, config_v5.handle, sizeof(config_v6.handle));
+            strncpy(config_v6.community, config_v5.community, sizeof(config_v6.community));
+        }
+    }
+
     // Save the new config
-    badge_config = config_v5;
+    badge_config = config_v6;
     save_badge_config();
 }

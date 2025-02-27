@@ -259,7 +259,14 @@ esp_err_t badge_init() {
 
     return err;
 }
-
+esp_err_t set_badge_api_url(const char *url){
+    if (strlen(url) >= BADGE_HANDLE_LENGTH) {
+        ESP_LOGV(TAG, "URL too long");
+        return ESP_ERR_INVALID_ARG;
+    }
+    snprintf(badge_config.api_url, sizeof(badge_config.api_url), "%s", url);
+    return save_badge_config();
+}
 esp_err_t set_badge_handle(const char *handle) {
     if (strlen(handle) >= BADGE_HANDLE_LENGTH) {
         ESP_LOGE(TAG, "Handle too long");

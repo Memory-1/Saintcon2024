@@ -24,8 +24,10 @@ LV_IMAGE_DECLARE(right_hand);
 #define MAX_SSID_LENGTH 33
 
 static lv_obj_t *settings_menu  = NULL;
+static lv_obj_t *api_url_value = NULL;
 static lv_obj_t *username_value = NULL;
 static lv_obj_t *saved_networks = NULL;
+static lv_obj_t *api_url =        NULL;
 static wifi_credentials_t saved_networks_list[CONFIG_EXTERNAL_WIFI_MAX_NETWORKS];
 static char scanned_ssid_list[MAX_SSID_COUNT][MAX_SSID_LENGTH];
 static esp_event_handler_instance_t wifi_scan_event_handler_instance = NULL;
@@ -43,6 +45,8 @@ static void wifi_networks_show(lv_obj_t *parent);
 static void wrist_orientation_edit(lv_obj_t *parent);
 static void screen_brightness_event_cb(lv_event_t *e);
 static void screen_brightness_edit(lv_obj_t *parent);
+static void api_url_edit(lv_obj_t *parent);
+static void api_url_cb(lv_event_code_t event, const char *url, void *user_data);
 
 // Callback for the close button on the modal overlay
 static void close_modal_event_cb(lv_event_t *e) {
@@ -112,6 +116,33 @@ static void username_input_cb(lv_event_code_t event, const char *username, void 
             }
         } else {
             ESP_LOGE(TAG, "Failed to save new handle: %s", esp_err_to_name(ESP_FAIL));
+        }
+    }
+}
+
+// Callback for the username input
+static void api_url_cb(lv_event_code_t event, const char *api_url, void *user_data) {
+    if (event == LV_EVENT_READY) {
+        if (set_badge_api_url(api_url) == ESP_OK) {
+            ESP_LOGI(TAG, "Saved new handle: %s", api_url);
+            lv_label_set_text(api_url_value, api_url);
+
+        //     // Update with the register API
+        //     api_result_t *result = api_register(username);
+        //     if (result == NULL) {
+        //         ESP_LOGE(TAG, "Failed to register new handle: %s", username);
+        //     } else {
+        //         if (result->status != true) {
+        //             ESP_LOGE(TAG, "Failed to register new handle: %s", username);
+        //         } else {
+        //             badge_config.registered = true;
+        //             save_badge_config();
+        //         }
+        //         api_free_result(result, true);
+        //     }
+        // } else {
+        //     ESP_LOGE(TAG, "Failed to save new handle: %s", esp_err_to_name(ESP_FAIL));
+        // }
         }
     }
 }
@@ -635,6 +666,52 @@ static void screen_brightness_edit(lv_obj_t *parent) {
     lv_obj_add_event_cb(slider, screen_brightness_event_cb, LV_EVENT_VALUE_CHANGED, slider);
 }
 
+// API URL popup
+static void api_url_edit(lv_obj_t *parent) {
+    // lv_obj_t *url_edit_modal = lv_obj_create(lv_screen_active());
+    // lv_obj_set_size(url_edit_modal, lv_pct(100), lv_pct(100));
+    // lv_obj_set_style_bg_color(url_edit_modal, lv_color_hex(0x333333), LV_PART_MAIN);
+    // lv_obj_set_style_bg_opa(url_edit_modal, LV_OPA_50, LV_PART_MAIN);
+    // lv_obj_set_style_border_width(url_edit_modal, 0, LV_PART_MAIN);
+    // lv_obj_align(url_edit_modal, LV_ALIGN_CENTER, 0, 0);
+    // lv_obj_remove_flag(url_edit_modal, LV_OBJ_FLAG_SCROLLABLE);
+
+    // lv_obj_t *inner_container = lv_obj_create(url_edit_modal);
+    // lv_obj_set_size(inner_container, lv_pct(90), lv_pct(50));
+    // lv_obj_set_style_bg_color(inner_container, lv_color_hex(WHITE), LV_PART_MAIN);
+    // lv_obj_set_style_border_width(inner_container, 2, LV_PART_MAIN);
+    // lv_obj_set_style_border_color(inner_container, lv_color_hex(ORANGE_DIM), LV_PART_MAIN);
+    // lv_obj_set_style_radius(inner_container, 3, LV_PART_MAIN);
+    // lv_obj_align(inner_container, LV_ALIGN_CENTER, 0, 0);
+    // lv_obj_set_flex_flow(inner_container, LV_FLEX_FLOW_COLUMN);
+    // lv_obj_set_flex_align(inner_container, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_START);
+
+    // lv_obj_t *close_button = lv_button_create(url_edit_modal);
+    // lv_obj_set_size(close_button, 25, 25);
+    // lv_obj_align_to(close_button, inner_container, LV_ALIGN_OUT_TOP_RIGHT, 5, 20);
+    // lv_obj_set_style_bg_color(close_button, lv_color_hex(ORANGE_MAIN), LV_PART_MAIN);
+    // lv_obj_set_style_radius(close_button, 0, LV_PART_MAIN);
+    // lv_obj_t *close_label = lv_label_create(close_button);
+    // lv_label_set_text(close_label, LV_SYMBOL_CLOSE);
+    // lv_obj_center(close_label);
+    // lv_obj_add_event_cb(close_button, close_modal_event_cb, LV_EVENT_CLICKED, url_edit_modal);
+
+    // lv_obj_t *slider_label = lv_label_create(inner_container);
+    // lv_label_set_text(slider_label, "Brightness");
+    // lv_obj_set_style_text_font(slider_label, &cyberphont3b_16, LV_PART_MAIN);
+    // lv_obj_set_style_text_color(slider_label, lv_color_hex(BLACK), LV_PART_MAIN);
+    // lv_obj_set_style_margin_bottom(slider_label, 10, LV_PART_MAIN);
+    // lv_obj_align(slider_label, LV_ALIGN_TOP_MID, 0, 10);
+
+    // lv_obj_add_event_cb(url_edit_modal, api_url_edit, LV_EVENT_VALUE_CHANGED, url_edit_modal);
+
+}
+
+// Callback for the username edit button
+static void api_url_edit_event_cb(lv_event_t *e) {
+    input_prompt(badge_config.api_url, "Enter API Url", false, api_url_cb, NULL);
+}
+
 void settings_page_create(lv_obj_t *parent) {
     lv_obj_clean(parent);
 
@@ -733,4 +810,47 @@ void settings_page_create(lv_obj_t *parent) {
     lv_obj_set_style_text_color(list_btn_lbl, lv_color_hex(WHITE), LV_PART_MAIN);
     lv_obj_set_style_pad_ver(list_btn_lbl, 5, LV_PART_MAIN);
     lv_obj_add_event_cb(list_btn, screen_brightness_edit, LV_EVENT_CLICKED, parent);
+
+    // // API URL LABEL
+    // char api_url[64];
+    // snprintf(username_str, sizeof(username_str), strlen(badge_config.handle) > 0 ? "%s" : "<not set>", badge_config.handle);
+    // username_value = lv_label_create(username_btn);
+    // lv_label_set_text(username_value, username_str);
+    // lv_obj_set_style_text_font(username_value, &bm_mini_16, LV_PART_MAIN);
+    // lv_obj_set_style_text_color(
+    //     username_value, strlen(badge_config.handle) > 0 ? lv_color_hex(GRAY_TINT_6) : lv_color_hex(GRAY_TINT_2), LV_PART_MAIN);
+    // lv_obj_set_style_pad_ver(username_value, 5, LV_PART_MAIN);
+    // lv_label_set_long_mode(username_value, LV_LABEL_LONG_SCROLL_CIRCULAR);
+    // lv_obj_set_flex_grow(username_value, 1);
+    // lv_obj_add_event_cb(username_btn, username_edit_event_cb, LV_EVENT_CLICKED, parent);
+
+    // API URL 
+    list_btn = lv_list_add_button(settings_menu, LV_SYMBOL_SETTINGS, "API URL");
+    lv_obj_set_style_bg_opa(list_btn, LV_OPA_TRANSP, LV_PART_MAIN);
+    lv_obj_set_style_border_width(list_btn, 2, LV_PART_MAIN);
+    lv_obj_set_style_border_color(list_btn, lv_color_hex(ORANGE_LIGHT), LV_PART_MAIN);
+    list_btn_img = lv_obj_get_child_by_type(list_btn, 0, &lv_image_class);
+    list_btn_lbl = lv_obj_get_child_by_type(list_btn, -1, &lv_label_class);
+    lv_obj_set_style_text_color(list_btn_img, lv_color_hex(ORANGE_LIGHTER), LV_PART_MAIN);
+    lv_obj_set_size(list_btn_img, 18, 18);
+    lv_image_set_inner_align(list_btn_img, LV_IMAGE_ALIGN_CENTER);
+    lv_obj_set_style_text_font(list_btn_lbl, &cyberphont3b_16, LV_PART_MAIN);
+    lv_obj_set_style_text_color(list_btn_lbl, lv_color_hex(WHITE), LV_PART_MAIN);
+    lv_obj_set_style_pad_ver(list_btn_lbl, 5, LV_PART_MAIN);
+    
+    char url_str[64];
+    snprintf(url_str, sizeof(url_str), strlen(badge_config.handle) > 0 ? "%s" : "<not set>", badge_config.handle);
+    api_url_value = lv_label_create(list_btn);
+    lv_label_set_text(api_url_value, url_str);
+    lv_obj_set_style_text_font(api_url_value, &bm_mini_16, LV_PART_MAIN);
+    lv_obj_set_style_text_color(
+        api_url_value, strlen(badge_config.api_url) > 0 ? lv_color_hex(GRAY_TINT_6) : lv_color_hex(GRAY_TINT_2), LV_PART_MAIN);
+    lv_obj_set_style_pad_ver(api_url_value, 5, LV_PART_MAIN);
+    lv_label_set_long_mode(api_url_value, LV_LABEL_LONG_SCROLL_CIRCULAR);
+    lv_obj_set_flex_grow(api_url_value, 1);
+
+
+    lv_obj_add_event_cb(list_btn, api_url_edit_event_cb, LV_EVENT_CLICKED, parent);
+
 }
+

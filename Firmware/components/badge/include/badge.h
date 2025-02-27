@@ -30,6 +30,14 @@ extern badge_state_t badge_state;
 esp_err_t badge_init();
 
 /**
+ * @brief sets the API url
+ * 
+ * @param api_url The new URL
+ * @return ESP_OK on success or an error code on failure
+*/
+esp_err_t set_badge_api_url(const char *api_url);
+
+/**
  * @brief Set the badge handle
  *
  * @param handle The handle to set
