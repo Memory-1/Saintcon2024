@@ -1,0 +1,10 @@
+{
+    "cmake.sourceDirectory": "/Users/kylesmith/Documents/GitHub/Saintcon2024/Firmware",
+    "files.associations": {
+        "variant": "c",
+        "regex": "cpp",
+        "test.h": "c",
+        "theme.h": "c",
+        "attack.h": "c"
+    }
+}

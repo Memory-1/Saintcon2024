@@ -335,7 +335,7 @@ static void status_label_event_handler(lv_event_t *e) {
     }
 }
 
-static const char *menu_items[] = {"Home", "Settings", "Map", "Tower Battle", "Shop", "Level Up", NULL, "Stats"};
+static const char *menu_items[] = {"Home", "Settings", "Map", "Tower Battle", "Shop", "Level Up", NULL, "Stats", "Test"};
 
 static void menu_button_handler(lv_event_t *e) {
     lv_event_code_t code = lv_event_get_code(e);
@@ -352,6 +352,7 @@ static void menu_button_handler(lv_event_t *e) {
             case 5: set_content_page(PAGE_LEVELUP); break;
             case 6: set_content_page(PAGE_SECRET); break;
             case 7: set_content_page(PAGE_STATS); break;
+            case 8: set_content_page(PAGE_TEST); break;
             default: //
                 ESP_LOGW(TAG, "Menu item %d not implemented", i);
                 break;

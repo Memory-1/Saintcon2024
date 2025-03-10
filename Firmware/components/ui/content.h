@@ -16,6 +16,7 @@ typedef enum {
     PAGE_LEVELUP,
     PAGE_SECRET,
     PAGE_STATS,
+    PAGE_TEST,
 } content_page_t;
 
 typedef struct {

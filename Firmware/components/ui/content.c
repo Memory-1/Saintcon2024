@@ -16,12 +16,13 @@
 #include "pages/shop.h"
 #include "pages/stats.h"
 #include "pages/tower_battle.h"
+#include "pages/test.h"
 
 static const char *TAG = "screens/main [content]";
 
 // Content labels
 const char *content_labels[] = {
-    "Home", "Settings", "Map", "Battle", "Shop", "Level Up", "Secret", "Stats",
+    "Home", "Settings", "Map", "Battle", "Shop", "Level Up", "Secret", "Stats", "Test",
 };
 
 // Keep track of the content area
@@ -93,6 +94,9 @@ void render_content() {
             break;
         case PAGE_STATS: //
             stats_page_create(content_area);
+            break;
+        case PAGE_TEST: //
+            test_page_create(content_area);
             break;
         default: //
             ESP_LOGW(TAG, "Unknown content page: %d", content_state.page);
